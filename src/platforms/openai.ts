@@ -31,27 +31,78 @@ const openai = OPENAI_SECRET_KEY
   })
   : undefined;
 
+const getOpenAiModel = () => openai
+  ? OPENAI_BASE_URL
+    ? openai.chat(MODEL)
+    : openai(MODEL)
+  : undefined;
+
 const getImageTextArgs = (
   imageBase64: string,
   query: string,
 ): (
   Parameters<typeof streamText>[0] &
   Parameters<typeof generateText>[0]
-) | undefined => openai ? {
-  model: openai(MODEL),
-  messages: [{
-    'role': 'user',
-    'content': [
-      {
-        'type': 'text',
-        'text': query,
-      }, {
-        'type': 'image',
-        'image': removeBase64Prefix(imageBase64),
-      },
-    ],
-  }],
-} : undefined;
+) | undefined => {
+  const model = getOpenAiModel();
+  return model ? {
+    model,
+    messages: [{
+      'role': 'user',
+      'content': [
+        {
+          'type': 'text',
+          'text': query,
+        }, {
+          'type': 'image',
+          'image': removeBase64Prefix(imageBase64),
+        },
+      ],
+    }],
+  } : undefined;
+};
+
+const getTextArgs = (
+  query: string,
+): Parameters<typeof generateText>[0] | undefined => {
+  const model = getOpenAiModel();
+  return model ? {
+    model,
+    messages: [{
+      'role': 'user',
+      'content': [
+        {
+          'type': 'text',
+          'text': query,
+        },
+      ],
+    }],
+  } : undefined;
+};
+
+const getImageTextObjectArgs = <T extends z.ZodSchema>(
+  imageBase64: string,
+  query: string,
+  schema: T,
+): Parameters<typeof generateText>[0] | undefined => {
+  const model = getOpenAiModel();
+  return model ? {
+    model,
+    output: Output.object({ schema }),
+    messages: [{
+      'role': 'user',
+      'content': [
+        {
+          'type': 'text',
+          'text': query,
+        }, {
+          'type': 'image',
+          'image': removeBase64Prefix(imageBase64),
+        },
+      ],
+    }],
+  } : undefined;
+};
 
 export const streamOpenAiImageQuery = async (
   imageBase64: string,
@@ -99,23 +150,10 @@ export const generateOpenAiImageObjectQuery = async <T extends z.ZodSchema>(
 ): Promise<z.infer<T>> => {
   await checkRateLimitAndThrow(isBatch);
 
-  if (openai) {
-    return generateText({
-      model: openai(MODEL),
-      output: Output.object({ schema }),
-      messages: [{
-        'role': 'user',
-        'content': [
-          {
-            'type': 'text',
-            'text': query,
-          }, {
-            'type': 'image',
-            'image': removeBase64Prefix(imageBase64),
-          },
-        ],
-      }],
-    }).then(result => Object.fromEntries(Object
+  const args = getImageTextObjectArgs(imageBase64, query, schema);
+
+  if (args) {
+    return generateText(args).then(result => Object.fromEntries(Object
       .entries(result.output || {})
       .map(([k, v]) => [k, cleanUpAiTextResponse(v as string)]),
     ) as z.infer<T>);
@@ -127,18 +165,9 @@ export const generateOpenAiImageObjectQuery = async <T extends z.ZodSchema>(
 export const testOpenAiConnection = async () => {
   await checkRateLimitAndThrow();
 
-  if (openai) {
-    return generateText({
-      model: openai(MODEL),
-      messages: [{
-        'role': 'user',
-        'content': [
-          {
-            'type': 'text',
-            'text': 'Test connection',
-          },
-        ],
-      }],
-    });
+  const args = getTextArgs('Test connection');
+
+  if (args) {
+    return generateText(args);
   }
 };
