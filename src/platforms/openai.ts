@@ -27,7 +27,12 @@ const checkRateLimitAndThrow = (isBatch?: boolean) =>
 const openai = OPENAI_SECRET_KEY
   ? createOpenAI({
     apiKey: OPENAI_SECRET_KEY,
-    ...OPENAI_BASE_URL && { baseURL: OPENAI_BASE_URL },
+    ...OPENAI_BASE_URL && {
+      baseURL: OPENAI_BASE_URL,
+      headers: {
+        'api-key': OPENAI_SECRET_KEY,
+      },
+    },
   })
   : undefined;
 
