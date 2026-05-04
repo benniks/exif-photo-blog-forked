@@ -165,12 +165,18 @@ export const POSTGRES_SSL_ENABLED =
   process.env.DISABLE_POSTGRES_SSL === '1' ? false : true;
 
 // STORAGE: REDIS
-export const REDIS_URL = (
-  process.env.KV_URL ||
+// @upstash/redis expects REST URLs, not Redis TCP URLs (`rediss://...`).
+// Vercel KV/Upstash often exposes both, so prefer REST variables and ignore
+// TCP URLs when only `KV_URL` is present.
+const REDIS_URL_RAW = (
   process.env.KV_REST_API_URL ||
   process.env.EXIF_KV_REST_API_URL ||
-  process.env.UPSTASH_REDIS_REST_URL
+  process.env.UPSTASH_REDIS_REST_URL ||
+  process.env.KV_URL
 );
+export const REDIS_URL = REDIS_URL_RAW?.startsWith('https://')
+  ? REDIS_URL_RAW
+  : undefined;
 export const REDIS_TOKEN = (
   process.env.KV_TOKEN ||
   process.env.KV_REST_API_TOKEN ||
