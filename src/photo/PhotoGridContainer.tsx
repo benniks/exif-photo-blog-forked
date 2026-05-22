@@ -21,6 +21,7 @@ export default function PhotoGridContainer({
   header,
   sidebar,
   className,
+  enableHalftoneEffect,
   ...categories
 }: {
   cacheKey: string
@@ -31,6 +32,7 @@ export default function PhotoGridContainer({
   header?: ReactNode
   sidebar?: ReactNode
   className?: string
+  enableHalftoneEffect?: boolean
 } & ComponentProps<typeof PhotoGrid>) {
   const shouldRenderInitialGrid =
     !MASONRY_GRID_ENABLED || count <= photos.length;
@@ -60,6 +62,7 @@ export default function PhotoGridContainer({
               photos,
               ...categories,
               animateOnFirstLoadOnly,
+              enableHalftoneEffect,
               onAnimationComplete,
             }} />
           )}
@@ -74,6 +77,7 @@ export default function PhotoGridContainer({
               ...categories,
               canStart: shouldAnimateDynamicItems,
               animateOnFirstLoadOnly,
+              enableHalftoneEffect,
             }} />}
         </div>
       </div>}

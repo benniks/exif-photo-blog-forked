@@ -10,11 +10,13 @@ import ImageMedium from '@/components/image/ImageMedium';
 import { clsx } from 'clsx/lite';
 import { pathForPhoto } from '@/app/path';
 import { SHOULD_PREFETCH_ALL_LINKS } from '@/app/config';
-import { useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import useVisibility from '@/utility/useVisibility';
 import LinkWithStatus from '@/components/LinkWithStatus';
 import Spinner from '@/components/Spinner';
 import PhotoColors from './color/PhotoColors';
+import { useAppState } from '@/app/AppState';
+import PhotoHalftoneOverlay from './PhotoHalftoneOverlay';
 
 export default function PhotoMedium({
   photo,
@@ -24,6 +26,7 @@ export default function PhotoMedium({
   className,
   onVisible,
   debugColor,
+  enableHalftoneEffect,
   ...categories
 }: {
   photo: Photo
@@ -33,10 +36,29 @@ export default function PhotoMedium({
   className?: string
   onVisible?: () => void
   debugColor?: boolean
+  enableHalftoneEffect?: boolean
 } & PhotoSetCategory) {
   const ref = useRef<HTMLAnchorElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
-  useVisibility({ ref, onVisible });
+  const {
+    arePhotoHalftonesEnabled,
+  } = useAppState();
+
+  const handleVisible = useCallback(() => {
+    setIsVisible(true);
+    onVisible?.();
+  }, [onVisible]);
+
+  const handleHidden = useCallback(() => {
+    setIsVisible(false);
+  }, []);
+
+  useVisibility({
+    ref,
+    onVisible: enableHalftoneEffect ? handleVisible : onVisible,
+    onHidden: enableHalftoneEffect ? handleHidden : undefined,
+  });
 
   return (
     <LinkWithStatus
@@ -81,6 +103,8 @@ export default function PhotoMedium({
             alt={altTextForPhoto(photo)}
             priority={priority}
           />
+          {enableHalftoneEffect && arePhotoHalftonesEnabled && isVisible &&
+            <PhotoHalftoneOverlay src={photo.url} />}
         </div>}
     </LinkWithStatus>
   );

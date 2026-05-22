@@ -13,6 +13,7 @@ import useViewportHeight from '@/utility/useViewportHeight';
 import TopPhotoEntities from './TopPhotoEntities';
 import AnimateItems from '@/components/AnimateItems';
 import { hasEnoughTopEntities } from '@/category/mobile';
+import PhotoHalftoneToggle from './PhotoHalftoneToggle';
 
 export default function PhotoGridPageClient({
   photos,
@@ -20,6 +21,7 @@ export default function PhotoGridPageClient({
   photosCountWithExcludes,
   sortBy,
   sortWithPriority,
+  enableHalftoneEffect,
   ...categories
 }: ComponentProps<typeof PhotoGridSidebar> & {
   photos: Photo[]
@@ -27,6 +29,7 @@ export default function PhotoGridPageClient({
   photosCountWithExcludes: number
   sortBy: SortBy
   sortWithPriority: boolean
+  enableHalftoneEffect?: boolean
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -64,6 +67,10 @@ export default function PhotoGridPageClient({
         sortWithPriority={sortWithPriority}
         excludeFromFeeds
         prioritizeInitialPhotos
+        enableHalftoneEffect={enableHalftoneEffect}
+        header={enableHalftoneEffect
+          ? <PhotoHalftoneToggle />
+          : undefined}
         sidebar={
           <MaskedScroll
             ref={ref}

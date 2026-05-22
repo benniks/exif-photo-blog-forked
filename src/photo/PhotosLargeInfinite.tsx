@@ -11,6 +11,7 @@ export default function PhotosLargeInfinite({
   sortBy,
   excludeFromFeeds,
   showStorageCheck,
+  enableHalftoneEffect,
 }: {
   initialOffset: number
   itemsPerPage: number
@@ -18,6 +19,7 @@ export default function PhotosLargeInfinite({
   sortWithPriority: boolean
   excludeFromFeeds?: boolean
   showStorageCheck?: boolean
+  enableHalftoneEffect?: boolean
 }) {
   return (
     <InfinitePhotoScroll
@@ -36,6 +38,7 @@ export default function PhotosLargeInfinite({
             onLastPhotoVisible,
             revalidatePhoto,
             showStorageCheck,
+            enableHalftoneEffect,
           }}
         />}
     </InfinitePhotoScroll>

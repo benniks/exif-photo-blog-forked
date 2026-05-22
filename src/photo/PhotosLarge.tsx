@@ -10,6 +10,7 @@ export default function PhotosLarge({
   onLastPhotoVisible,
   revalidatePhoto,
   showStorageCheck,
+  enableHalftoneEffect,
 }: {
   photos: Photo[]
   animate?: boolean
@@ -17,6 +18,7 @@ export default function PhotosLarge({
   onLastPhotoVisible?: () => void
   revalidatePhoto?: RevalidatePhoto
   showStorageCheck?: boolean
+  enableHalftoneEffect?: boolean
 }) {
   return (
     <AnimateItems
@@ -38,6 +40,7 @@ export default function PhotosLarge({
             ? onLastPhotoVisible
             : undefined}
           showStorageCheck={showStorageCheck}
+          enableHalftoneEffect={enableHalftoneEffect}
         />)}
       itemKeys={photos.map(photo => photo.id)}
     />
