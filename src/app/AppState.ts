@@ -69,8 +69,6 @@ export type AppStateContextType = {
   setAreZoomControlsShown?: Dispatch<SetStateAction<boolean>>
   arePhotosMatted?: boolean
   setArePhotosMatted?: Dispatch<SetStateAction<boolean>>
-  arePhotoHalftonesEnabled?: boolean
-  setArePhotoHalftonesEnabled?: Dispatch<SetStateAction<boolean>>
   shouldDebugImageFallbacks?: boolean
   setShouldDebugImageFallbacks?: Dispatch<SetStateAction<boolean>>
   shouldShowBaselineGrid?: boolean

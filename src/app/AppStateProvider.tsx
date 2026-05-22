@@ -107,8 +107,6 @@ export default function AppStateProvider({
     useState(SHOW_ZOOM_CONTROLS);
   const [arePhotosMatted, setArePhotosMatted] =
     useState(MATTE_PHOTOS);
-  const [arePhotoHalftonesEnabled, setArePhotoHalftonesEnabled] =
-    useState(true);
   const [shouldDebugImageFallbacks, setShouldDebugImageFallbacks] =
     useState(false);
   const [shouldShowBaselineGrid, setShouldShowBaselineGrid] =
@@ -276,8 +274,6 @@ export default function AppStateProvider({
         setAreZoomControlsShown,
         arePhotosMatted,
         setArePhotosMatted,
-        arePhotoHalftonesEnabled,
-        setArePhotoHalftonesEnabled,
         shouldDebugImageFallbacks,
         setShouldDebugImageFallbacks,
         shouldShowBaselineGrid,

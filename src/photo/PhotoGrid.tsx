@@ -29,7 +29,6 @@ export default function PhotoGrid({
   additionalTile,
   small,
   selectable = true,
-  enableHalftoneEffect,
   onLastPhotoVisible,
   onAnimationComplete,
   ...categories
@@ -45,7 +44,6 @@ export default function PhotoGrid({
   additionalTile?: ReactNode
   small?: boolean
   selectable?: boolean
-  enableHalftoneEffect?: boolean
   onLastPhotoVisible?: () => void
   onAnimationComplete?: () => void
 } & PhotoSetCategory) {
@@ -94,7 +92,6 @@ export default function PhotoGrid({
           priority: prioritizeInitialPhotos
             ? (MASONRY_GRID_ENABLED ? index < 36 : index < 6)
             : undefined,
-          enableHalftoneEffect,
           onVisible: index === photos.length - 1
             ? onLastPhotoVisible
             : undefined,

@@ -54,14 +54,12 @@ export default async function HomePage() {
             photosCountWithExcludes,
             ...USER_DEFAULT_SORT_OPTIONS,
             ...categories,
-            enableHalftoneEffect: true,
           }}
         />
         : <PhotoFullPage {...{
           photos,
           photosCount,
           ...USER_DEFAULT_SORT_OPTIONS,
-          enableHalftoneEffect: true,
         }} />
       : <PhotosEmptyState />
   );

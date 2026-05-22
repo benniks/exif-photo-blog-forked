@@ -34,7 +34,7 @@ import {
 } from '@/app/config';
 import AdminPhotoMenu from '@/admin/AdminPhotoMenu';
 import { RevalidatePhoto } from './InfinitePhotoScroll';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import useVisibility from '@/utility/useVisibility';
 import PhotoDate from './PhotoDate';
 import { useAppState } from '@/app/AppState';
@@ -52,7 +52,6 @@ import MaskedScroll from '@/components/MaskedScroll';
 import { useAppText } from '@/i18n/state/client';
 import { Album } from '@/album';
 import AdminPhotoStorageCheck from '@/admin/storage/AdminPhotoStorageCheck';
-import PhotoHalftoneOverlay from './PhotoHalftoneOverlay';
 
 export default function PhotoLarge({
   photo,
@@ -87,7 +86,6 @@ export default function PhotoLarge({
   onVisible,
   showAdminKeyCommands,
   showStorageCheck,
-  enableHalftoneEffect,
 }: {
   photo: Photo
   className?: string
@@ -121,18 +119,15 @@ export default function PhotoLarge({
   onVisible?: () => void
   showAdminKeyCommands?: boolean
   showStorageCheck?: boolean
-  enableHalftoneEffect?: boolean
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const refZoomControls = useRef<ZoomControlsRef>(null);
   const refPhotoRecipe = useRef<HTMLDivElement>(null);
   const refPhotoFilm = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
 
   const {
     areZoomControlsShown,
     arePhotosMatted,
-    arePhotoHalftonesEnabled,
     shouldDebugRecipeOverlays,
     isUserSignedIn,
   } = useAppState();
@@ -175,20 +170,7 @@ export default function PhotoLarge({
   const showRecipeContent = showRecipe && shouldShowRecipeDataForPhoto(photo);
   const showFilmContent = showFilm && shouldShowFilmDataForPhoto(photo);
 
-  const handleVisible = useCallback(() => {
-    setIsVisible(true);
-    onVisible?.();
-  }, [onVisible]);
-
-  const handleHidden = useCallback(() => {
-    setIsVisible(false);
-  }, []);
-
-  useVisibility({
-    ref,
-    onVisible: enableHalftoneEffect ? handleVisible : onVisible,
-    onHidden: enableHalftoneEffect ? handleHidden : undefined,
-  });
+  useVisibility({ ref, onVisible });
 
   const hasTitle =
     showTitle &&
@@ -234,27 +216,23 @@ export default function PhotoLarge({
       arePhotosMatted && 'h-[90%]',
       arePhotosMatted && matteContentWidthForAspectRatio,
     )}>
-      <div className="group relative">
-        <ZoomControls
-          ref={refZoomControls}
-          selectImageElement={selectZoomImageElement}
-          {...{ isEnabled: showZoomControls, shouldZoomOnFKeydown }}
-        >
-          <ImageLarge
-            className={clsx(arePhotosMatted && 'h-full')}
-            classNameImage={clsx(arePhotosMatted &&
-              'object-contain w-full h-full')}
-            alt={altTextForPhoto(photo)}
-            src={photo.url}
-            aspectRatio={photo.aspectRatio}
-            blurDataURL={photo.blurData}
-            blurCompatibilityMode={doesPhotoNeedBlurCompatibility(photo)}
-            priority={priority}
-          />
-        </ZoomControls>
-        {enableHalftoneEffect && arePhotoHalftonesEnabled && isVisible &&
-          <PhotoHalftoneOverlay src={photo.url} />}
-      </div>
+      <ZoomControls
+        ref={refZoomControls}
+        selectImageElement={selectZoomImageElement}
+        {...{ isEnabled: showZoomControls, shouldZoomOnFKeydown }}
+      >
+        <ImageLarge
+          className={clsx(arePhotosMatted && 'h-full')}
+          classNameImage={clsx(arePhotosMatted &&
+            'object-contain w-full h-full')}
+          alt={altTextForPhoto(photo)}
+          src={photo.url}
+          aspectRatio={photo.aspectRatio}
+          blurDataURL={photo.blurData}
+          blurCompatibilityMode={doesPhotoNeedBlurCompatibility(photo)}
+          priority={priority}
+        />
+      </ZoomControls>
       <div className={clsx(
         'absolute inset-0',
         'flex items-center justify-center',
